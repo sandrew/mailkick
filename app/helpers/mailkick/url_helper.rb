@@ -12,5 +12,23 @@ module Mailkick
         )
       )
     end
+    
+    def method_missing(method, *args, &block)
+      if main_app_url_helper?(method)
+        main_app.send(method, *args)
+        super
+      else
+      end
+    end
+
+    def respond_to?(method)
+      main_app_url_helper?(method) || super
+    end
+
+    private
+
+    def main_app_url_helper?(method)
+      (method.to_s.end_with?('_path') || method.to_s.end_with?('_url')) && main_app.respond_to?(method)
+    end
   end
 end
